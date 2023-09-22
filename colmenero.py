@@ -1,82 +1,67 @@
+import multiprocessing
 import threading
 import time
-from multiprocessing import Process
 
 from abeja import Abeja
 
 
-class Colmenero(threading.Thread):
+class Colmenero(multiprocessing.Process):
     id = 0
     process_tail = []
-    process_executor = None
+    targets = []
+    counter= 0
 
-    def __init__(self, id, *args, **kwargs, ):
-        super(Colmenero, self).__init__(*args, **kwargs)
-        self.id = id
-        # self.process_executor = concurrent.futures.ProcessPoolExecutor()
+    def __init__(self, **kwargs):
+        super(Colmenero, self).__init__()
+        for key, value in kwargs.items():
+            if key == "id":
+                self.id = id
+            if key == "targets":
+                self.targets = value
 
     def run(self):
         while True:
             try:
-                time.sleep(1)
-                self.process_manager()
-                time.sleep(1)
-                print("Colmena", self.id)
-                # self.process_tail.append(Abeja(suma,2))
-                # print(len(self.process_tail))
+                for target in self.targets:
+                    self.process_tail.append(Abeja("abeja1", "alza1", target, 1))
+                self.thread_manager()
             except Exception as error:
                 print(error)
-            # self.gestor2()
-            if len(self.process_tail) > 0:
-                None
 
-    def process_manager(self):
-        process_list = []
+    def thread_manager(self):
         if len(self.process_tail) > 0:
             for abeja in self.process_tail:
+                retValue = media_alza("Media_alza " + abeja.name +" "+ str(self.counter), argumentos=abeja.arguments)
                 time.sleep(1)
-                p = Process(name="Alza " + abeja.name, target=alza, args=abeja.arguments)
-                process_list.append(p)
-                self.process_tail.remove(abeja)
+                self.counter +=1
+                if retValue:
+                    self.process_tail.remove(abeja)
 
-            for p in process_list:
-                p.start()
-                time.sleep(1)
+    # def addbee(self, *abejas):
+    #    for abeja in abejas:
+    #        self.process_tail.append(abeja)
+    #        print("Proces tail -> ", len(self.process_tail))
 
-    def addbee(self, *abejas):
-        for abeja in abejas:
-            self.process_tail.append(abeja)
+    # def delbee(self, abeja_name):
+    #    for abeja in self.process_tail:
+    #        if abeja.name == abeja_name:
+    #            self.process_tail.pop(abeja)
 
-    def delbee(self, abeja_name):
-        for abeja in self.process_tail:
-            if abeja.name == abeja_name:
-                self.process_tail.pop(abeja)
-
-    def create_bee(self, name, alza, metodo, *args):
-        self.addbee(Abeja(name, alza, metodo, args))
+    # def create_bee(self, name, alza, metodo, *args):
+    #    self.addbee(Abeja(name, alza, metodo, args))
 
 
-def alza(*args):
-    name = ""
-    target = None
-    argumentos = []
-
-    i = 0
-    for dato in args:
-        if i == 0:
-            name = dato
-            i += 1
-        elif i == 1:
-            target = dato
-            i += 1
-        else:
-            argumentos.append(dato)
-
-    media_alza(name, target, argumentos)
-
-    #
-
-
-def media_alza(name, target, argumentos):
-    print(name, target, argumentos)
-    threading.Thread(name=name, target=target, args=argumentos)
+def media_alza(name, argumentos):
+    try:
+        i=0
+        for arg in argumentos:
+            if i==0:
+                nombre= arg
+            elif i==1:
+                objetivo= arg
+            else:
+                arguments= arg
+            i+=1
+        threading.Thread(name=nombre, target=objetivo, args=[arguments]).start()
+    except Exception as error:
+        print(error)

@@ -1,18 +1,26 @@
+import threading
+import time
+
 from colmenero import Colmenero
+from abeja import Abeja
 
 
-def suma(value, *args):
-    return value + 1
+def suma(*args):
+    try:
+        while True:
+            print("SUMA -> ",str(args))
+            time.sleep(1)
+    except Exception as error:
+        print(error)
 
 
-def decir_algo(text, *args):
-    print(text + str(*args))
+def decir_algo(*args):
+    print("decir algo -> ", str(*args))
 
 
 if __name__ == '__main__':
-    colmena1 = Colmenero(1)
+    colmena1 = Colmenero(id=1, targets=[suma])
+    colmena2 = Colmenero(id=2, targets=[decir_algo])
     colmena1.start()
-    colmena1.create_bee("abeja1", "alza1", suma, 1)
-    colmena1.create_bee("abeja2", "alza2", suma, 5)
-    colmena1.create_bee("abeja3", "alza3", decir_algo, "hola")
-
+    colmena2.start()
+    colmena2.join()
