@@ -9,59 +9,60 @@ class Colmenero(multiprocessing.Process):
     id = 0
     process_tail = []
     targets = []
-    counter= 0
 
     def __init__(self, **kwargs):
         super(Colmenero, self).__init__()
-        for key, value in kwargs.items():
-            if key == "id":
-                self.id = id
-            if key == "targets":
-                self.targets = value
+
 
     def run(self):
-        while True:
             try:
-                for target in self.targets:
-                    self.process_tail.append(Abeja("abeja1", "alza1", target, 1))
-                self.thread_manager()
+                time.sleep(1)
+                print(self.targets)
             except Exception as error:
                 print(error)
 
-    def thread_manager(self):
-        if len(self.process_tail) > 0:
-            for abeja in self.process_tail:
-                retValue = media_alza("Media_alza " + abeja.name +" "+ str(self.counter), argumentos=abeja.arguments)
-                time.sleep(1)
-                self.counter +=1
-                if retValue:
-                    self.process_tail.remove(abeja)
+    def add_bee_kw(self, **kwargs):
+        abeja = Abeja()
+        counter = 0
+        if len(kwargs.items()) > 1:
+            for key, value in kwargs.items():
+                if key[:6] == "target":
+                    abeja.add_name("Abeja "+str(value))
+                    abeja.add_target(value)
+                if key[:6] == "params":
+                    abeja.add_argument_list(value)
+                counter += 1
+                if counter >= 2:
+                    self.targets.append(abeja)
+                    abeja = None
+                    counter=0
+        else:
+            abeja = Abeja()
+            for key, value in kwargs.items():
+                if key[:6] == "target":
+                    abeja.add_name("Abeja " + str(value))
+                    abeja.add_target(value)
+                if key[:6] == "params":
+                    abeja.add_argument_list(value)
+                self.targets.append(abeja)
+                abeja= None
 
-    # def addbee(self, *abejas):
-    #    for abeja in abejas:
-    #        self.process_tail.append(abeja)
-    #        print("Proces tail -> ", len(self.process_tail))
-
-    # def delbee(self, abeja_name):
-    #    for abeja in self.process_tail:
-    #        if abeja.name == abeja_name:
-    #            self.process_tail.pop(abeja)
-
-    # def create_bee(self, name, alza, metodo, *args):
-    #    self.addbee(Abeja(name, alza, metodo, args))
-
-
-def media_alza(name, argumentos):
-    try:
-        i=0
-        for arg in argumentos:
-            if i==0:
-                nombre= arg
-            elif i==1:
-                objetivo= arg
+    def charge_process_list(self):
+        for abeja in self.targets:
+            if len(abeja.arguments) >= 1:
+                p = multiprocessing.Process(target=abeja.target, args=abeja.arguments)
             else:
-                arguments= arg
-            i+=1
-        threading.Thread(name=nombre, target=objetivo, args=[arguments]).start()
-    except Exception as error:
-        print(error)
+                p = multiprocessing.Process(target=abeja.target)
+            self.process_tail.append(p)
+
+    def run_process_list(self):
+        for proceso in self.process_tail:
+            proceso.start()
+
+    def seeall(self):
+        print("\n")
+        print("Process List Line -> ", self.process_tail)
+        print("Targets List line-> ", self.targets)
+        print("Target List:")
+        for target in self.targets:
+            print(target)
