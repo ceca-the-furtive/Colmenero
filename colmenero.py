@@ -13,13 +13,12 @@ class Colmenero(multiprocessing.Process):
     def __init__(self, **kwargs):
         super(Colmenero, self).__init__()
 
-
     def run(self):
-            try:
-                time.sleep(1)
-                print(self.targets)
-            except Exception as error:
-                print(error)
+        try:
+            time.sleep(1)
+            print(self.targets)
+        except Exception as error:
+            print(error)
 
     def add_bee_kw(self, **kwargs):
         abeja = Abeja()
@@ -27,7 +26,7 @@ class Colmenero(multiprocessing.Process):
         if len(kwargs.items()) > 1:
             for key, value in kwargs.items():
                 if key[:6] == "target":
-                    abeja.add_name("Abeja "+str(value))
+                    abeja.add_name("Abeja " + str(value))
                     abeja.add_target(value)
                 if key[:6] == "params":
                     abeja.add_argument_list(value)
@@ -35,7 +34,7 @@ class Colmenero(multiprocessing.Process):
                 if counter >= 2:
                     self.targets.append(abeja)
                     abeja = None
-                    counter=0
+                    counter = 0
         else:
             abeja = Abeja()
             for key, value in kwargs.items():
@@ -45,7 +44,12 @@ class Colmenero(multiprocessing.Process):
                 if key[:6] == "params":
                     abeja.add_argument_list(value)
                 self.targets.append(abeja)
-                abeja= None
+                abeja = None
+
+    def add_bee(self, target, params: tuple):
+        abeja = Abeja()
+        abeja.add_target(target)
+        abeja.add_argument_list(params)
 
     def charge_process_list(self):
         for abeja in self.targets:
