@@ -50,6 +50,7 @@ class Colmenero(multiprocessing.Process):
         abeja = Abeja()
         abeja.add_target(target)
         abeja.add_argument_list(params)
+        self.targets.append(abeja)
 
     def charge_process_list(self):
         for abeja in self.targets:
