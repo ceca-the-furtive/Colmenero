@@ -1,8 +1,6 @@
 import time
 
 from colmenero import Colmenero
-from abeja import Abeja
-
 
 def suma(*args):
     try:
